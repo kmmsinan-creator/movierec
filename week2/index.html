@@ -14,24 +14,23 @@
   <!-- Hero Banner -->
   <section class="hero">
     <div class="hero-text">
-      <h2>Welcome to MovieFlix</h2>
-      <p>Discover movies you'll love, powered by your choices 🎬</p>
+      <h2>Discover Movies</h2>
+      <p>Your next favorite movie is just one click away.</p>
     </div>
   </section>
 
-  <!-- Main container -->
+  <!-- Main content -->
   <div class="container">
-    <p>Pick a movie you like, and we'll recommend similar ones</p>
+    <!-- Controls -->
+    <div class="controls">
+      <select id="movie-select"></select>
+      <button id="recommend-btn" type="button">Get Recommendations</button>
+    </div>
 
-    <!-- Dropdown -->
-    <select id="movie-select"></select>
-
-    <!-- Button -->
-    <button id="recommend-btn" type="button">Get Recommendations</button>
-
-    <!-- Results -->
+    <!-- Recommendations -->
     <div id="result-box">
-      <div id="result">Loading data...</div>
+      <h2>Recommended for You</h2>
+      <div id="result" class="recommend-row">Loading data...</div>
     </div>
   </div>
 
