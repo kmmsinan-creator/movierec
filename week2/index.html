@@ -1,28 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Content-Based Movie Recommender</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- New Movie Website Header -->
+  <header>
+    <h1>🎬 Movie Recommender</h1>
+  </header>
+
+  <!-- Main container -->
   <div class="container">
-    <h1>Content-Based Movie Recommender</h1>
     <p>Select a movie you like, and we'll find similar ones for you!</p>
 
-    <!-- Dropdown Menu -->
+    <!-- Dropdown -->
     <select id="movie-select"></select>
 
-    <!-- Recommendation Button (type="button" + id for JS listener) -->
+    <!-- Button -->
     <button id="recommend-btn" type="button">Get Recommendations</button>
 
-    <!-- Result Display -->
+    <!-- Results -->
     <div id="result-box">
       <p id="result">Loading data...</p>
     </div>
   </div>
 
-  <!-- Load scripts in correct order -->
+  <!-- Scripts -->
   <script src="data.js"></script>
   <script src="script.js"></script>
 </body>
