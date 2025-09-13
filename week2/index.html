@@ -1,58 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Content-Based Movie Recommender</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>MovieFlix</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <!-- Navbar -->
-  <header class="navbar">
-    <div class="logo">MovieRecs</div>
+  <header>
+    <h1 class="logo">MovieFlix</h1>
     <nav>
-      <ul class="nav-links">
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Movies</a></li>
-        <li><a href="#">Genres</a></li>
-        <li><a href="#">My List</a></li>
-      </ul>
+      <a href="#">Home</a>
+      <a href="#">Movies</a>
+      <a href="#">Series</a>
+      <a href="#">My List</a>
     </nav>
     <div class="search-box">
-      <input type="text" id="search" placeholder="Search movies..." />
+      <input type="text" id="search-input" placeholder="Search movies...">
     </div>
   </header>
 
-  <!-- Hero Section -->
+  <!-- Hero Banner -->
   <section class="hero">
-    <h1>Content-Based Movie Recommender</h1>
-    <p>Select a movie you like, and we'll find similar ones for you!</p>
+    <div class="hero-text">
+      <h2>Featured Movie</h2>
+      <p>Discover something new today</p>
+      <button class="btn-play">▶ Play</button>
+      <button class="btn-more">ℹ More Info</button>
+    </div>
+  </section>
 
+  <!-- Main content -->
+  <div class="container">
+    <!-- Controls -->
     <div class="controls">
-      <select id="movie-select">
-        <option value="" disabled selected>-- Select a movie --</option>
-        <option value="Inception">Inception</option>
-        <option value="Interstellar">Interstellar</option>
-        <option value="The Dark Knight">The Dark Knight</option>
-        <option value="Memento">Memento</option>
-        <option value="Tenet">Tenet</option>
-      </select>
-      <button id="recommend-btn">Get Recommendation</button>
+      <select id="movie-select"></select>
+      <button id="recommend-btn" type="button">Get Recommendations</button>
     </div>
-  </section>
 
-  <!-- Recommendations Section -->
-  <section id="result-box">
-    <h2>Recommended Movies</h2>
-    <div id="result" class="recommendations-grid">
-      <p>Please select a movie to see recommendations.</p>
+    <!-- Recommendations -->
+    <div id="result-box">
+      <h2>Recommended for You</h2>
+      <div id="result" class="recommend-row">Loading data...</div>
     </div>
-  </section>
 
-  <!-- Footer -->
-  <footer>
-    <p>&copy; 2025 MovieRecs. Inspired by Netflix design.</p>
-  </footer>
+    <!-- Extra Sections like Netflix -->
+    <section class="movie-section">
+      <h2>Trending Now</h2>
+      <div class="movie-row" id="trending-row">
+        <!-- Movie cards added dynamically -->
+      </div>
+    </section>
+
+    <section class="movie-section">
+      <h2>Popular in Drama</h2>
+      <div class="movie-row" id="drama-row">
+        <!-- Movie cards added dynamically -->
+      </div>
+    </section>
+  </div>
 
   <!-- Scripts -->
   <script src="data.js"></script>
