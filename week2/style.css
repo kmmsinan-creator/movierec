@@ -7,7 +7,7 @@
 
 body {
   font-family: "Helvetica Neue", Arial, sans-serif;
-  background: #141414; /* Netflix dark */
+  background: #141414;
   color: #fff;
   min-height: 100vh;
   overflow-x: hidden;
@@ -19,24 +19,43 @@ header {
   top: 0;
   width: 100%;
   background: rgba(0,0,0,0.9);
-  padding: 20px 40px;
+  padding: 15px 40px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   z-index: 1000;
 }
 
-header h1 {
+header .logo {
   color: #e50914;
   font-size: 28px;
   font-weight: bold;
-  letter-spacing: 1px;
+}
+
+header nav a {
+  color: #fff;
+  margin: 0 15px;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+header nav a:hover {
+  color: #e50914;
+}
+
+.search-box input {
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: none;
+  background: #333;
+  color: #fff;
 }
 
 /* Hero Banner */
 .hero {
   width: 100%;
-  height: 450px;
-  background: url('https://picsum.photos/1600/600?blur=3') center/cover no-repeat;
+  height: 500px;
+  background: url('https://picsum.photos/1600/700?blur=2') center/cover no-repeat;
   display: flex;
   align-items: flex-end;
   padding: 60px;
@@ -57,20 +76,48 @@ header h1 {
 }
 
 .hero-text h2 {
-  font-size: 48px;
+  font-size: 50px;
   font-weight: bold;
-  color: #fff;
 }
 
 .hero-text p {
   font-size: 20px;
   color: #ccc;
-  margin-top: 10px;
+  margin: 10px 0;
 }
 
-/* Container */
+.hero-text button {
+  padding: 12px 20px;
+  margin-right: 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-play {
+  background: #fff;
+  color: #000;
+}
+
+.btn-more {
+  background: rgba(109,109,110,0.7);
+  color: #fff;
+}
+
+.btn-play:hover {
+  background: #ddd;
+}
+
+.btn-more:hover {
+  background: rgba(109,109,110,1);
+}
+
+/* Main Container */
 .container {
   padding: 40px;
+  margin-top: 20px;
 }
 
 /* Controls */
@@ -80,26 +127,20 @@ header h1 {
 }
 
 #movie-select {
-  padding: 12px;
+  padding: 10px;
   border-radius: 6px;
   border: none;
   background: #333;
   color: #fff;
-  font-size: 16px;
   margin-right: 10px;
 }
 
-#movie-select:hover {
-  background: #444;
-}
-
 button {
-  padding: 12px 25px;
-  border: none;
+  padding: 10px 20px;
   border-radius: 6px;
-  background: #e50914; 
+  border: none;
+  background: #e50914;
   color: #fff;
-  font-size: 16px;
   font-weight: bold;
   cursor: pointer;
   transition: 0.3s;
@@ -110,31 +151,29 @@ button:hover {
   transform: scale(1.05);
 }
 
-/* Recommendation Row */
-#result-box {
-  margin-top: 40px;
-}
-
-.recommend-row {
+/* Rows */
+.recommend-row,
+.movie-row {
   display: flex;
   gap: 20px;
   overflow-x: auto;
   padding-bottom: 10px;
-  scrollbar-width: thin;
 }
 
-.recommend-row::-webkit-scrollbar {
+.recommend-row::-webkit-scrollbar,
+.movie-row::-webkit-scrollbar {
   height: 8px;
 }
 
-.recommend-row::-webkit-scrollbar-thumb {
+.recommend-row::-webkit-scrollbar-thumb,
+.movie-row::-webkit-scrollbar-thumb {
   background: #333;
   border-radius: 4px;
 }
 
 /* Movie Card */
 .movie-card {
-  min-width: 200px;
+  min-width: 180px;
   background: #222;
   border-radius: 8px;
   padding: 15px;
@@ -148,23 +187,21 @@ button:hover {
 }
 
 .movie-card h3 {
-  font-size: 18px;
-  margin-bottom: 6px;
-  color: #fff;
+  font-size: 16px;
+  margin-bottom: 5px;
 }
 
 .movie-card p {
-  font-size: 14px;
-  margin: 4px 0;
+  font-size: 13px;
+  margin: 2px 0;
   color: #bbb;
 }
 
 .genre-tag {
   display: inline-block;
   background: #444;
-  color: #fff;
-  font-size: 12px;
-  padding: 3px 8px;
+  font-size: 11px;
+  padding: 3px 6px;
   border-radius: 4px;
-  margin: 2px;
+  margin: 2px 2px 0 0;
 }
