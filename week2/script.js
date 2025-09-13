@@ -31,7 +31,7 @@ function populateMoviesDropdown() {
     });
 }
 
-// Recommendation logic (unchanged)
+// Recommendation logic
 function getRecommendations() {
   const select = document.getElementById("movie-select");
   const selectedId = parseInt(select.value, 10);
@@ -69,19 +69,26 @@ function getRecommendations() {
   });
 }
 
-// Build card
+// Build Netflix-style movie card with poster
 function makeMovieCard(movie, similarity = null) {
+  const posterUrl = `https://picsum.photos/200/300?random=${movie.id}`;
+
   const card = document.createElement("div");
   card.className = "movie-card";
   card.innerHTML = `
-    <h3>${movie.title}</h3>
-    ${similarity !== null ? `<p><strong>${similarity}% Match</strong></p>` : ""}
-    <div>${movie.genres.map((g) => `<span class="genre-tag">${g}</span>`).join(" ")}</div>
+    <img src="${posterUrl}" alt="${movie.title}" class="movie-poster">
+    <div class="movie-info">
+      <h3>${movie.title}</h3>
+      ${similarity !== null ? `<p class="match">${similarity}% Match</p>` : ""}
+      <div class="genres">
+        ${movie.genres.map((g) => `<span class="genre-tag">${g}</span>`).join(" ")}
+      </div>
+    </div>
   `;
   return card;
 }
 
-// Extra sections like Netflix
+// Extra Netflix-style rows
 function populateExtraSections() {
   const trendingRow = document.getElementById("trending-row");
   const dramaRow = document.getElementById("drama-row");
@@ -92,7 +99,7 @@ function populateExtraSections() {
         .forEach((m) => dramaRow.appendChild(makeMovieCard(m)));
 }
 
-// Search
+// Search feature
 function handleSearch(e) {
   const query = e.target.value.toLowerCase();
   const results = movies.filter((m) => m.title.toLowerCase().includes(query));
