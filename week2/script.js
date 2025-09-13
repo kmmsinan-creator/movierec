@@ -1,6 +1,7 @@
 // script.js
 // Handles UI interactions and recommendation logic
 
+// Wait until page loads
 window.onload = async function () {
   try {
     await loadData(); // from data.js
@@ -12,15 +13,16 @@ window.onload = async function () {
       "Error loading data. Please check files.";
   }
 
-  document.getElementById("recommend-btn")
-    .addEventListener("click", getRecommendations);
+  // Attach button click
+  document.getElementById("recommend-btn").addEventListener("click", getRecommendations);
 };
 
-// Populate dropdown
+// Populate dropdown with movie list
 function populateMoviesDropdown() {
   const select = document.getElementById("movie-select");
-  select.innerHTML = "";
+  select.innerHTML = ""; // clear old options if any
 
+  // Sort alphabetically
   const sortedMovies = [...movies].sort((a, b) =>
     a.title.localeCompare(b.title)
   );
@@ -33,7 +35,7 @@ function populateMoviesDropdown() {
   });
 }
 
-// Recommendation logic
+// Main recommendation logic
 function getRecommendations() {
   const select = document.getElementById("movie-select");
   const selectedId = parseInt(select.value, 10);
@@ -44,6 +46,7 @@ function getRecommendations() {
     return;
   }
 
+  // Find liked movie
   const likedMovie = movies.find((m) => m.id === selectedId);
   if (!likedMovie) {
     document.getElementById("result").innerText =
@@ -53,8 +56,10 @@ function getRecommendations() {
 
   const likedGenres = new Set(likedMovie.genres);
 
+  // Exclude the liked movie itself
   const candidateMovies = movies.filter((m) => m.id !== likedMovie.id);
 
+  // Score using Jaccard Similarity
   const scoredMovies = candidateMovies.map((m) => {
     const candidateGenres = new Set(m.genres);
     const intersection = new Set(
@@ -65,12 +70,14 @@ function getRecommendations() {
     return { ...m, score };
   });
 
+  // Sort and take top 2
   const topRecommendations = scoredMovies
     .sort((a, b) => b.score - a.score)
-    .slice(0, 6); // show more like Netflix row
+    .slice(0, 2);
 
+  // Display as cards with similarity %
   const resultDiv = document.getElementById("result");
-  resultDiv.innerHTML = "";
+  resultDiv.innerHTML = ""; // clear old results
 
   if (topRecommendations.length === 0) {
     resultDiv.innerHTML = "<p>No similar movies found.</p>";
@@ -78,12 +85,13 @@ function getRecommendations() {
   }
 
   topRecommendations.forEach((movie) => {
-    const similarity = Math.round(movie.score * 100);
+    const similarity = Math.round(movie.score * 100); // %
     const card = document.createElement("div");
     card.className = "movie-card";
     card.innerHTML = `
       <h3>${movie.title}</h3>
-      <p><strong>${similarity}% Match</strong></p>
+      <p><strong>Similarity:</strong> ${similarity}%</p>
+      <p><strong>Genres:</strong></p>
       <div>${movie.genres
         .map((g) => `<span class="genre-tag">${g}</span>`)
         .join(" ")}</div>
