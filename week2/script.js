@@ -75,7 +75,7 @@ function getRecommendations() {
     .sort((a, b) => b.score - a.score)
     .slice(0, 2);
 
-  // Display as Netflix-style cards
+  // Display as cards with similarity %
   const resultDiv = document.getElementById("result");
   resultDiv.innerHTML = ""; // clear old results
 
@@ -85,9 +85,17 @@ function getRecommendations() {
   }
 
   topRecommendations.forEach((movie) => {
+    const similarity = Math.round(movie.score * 100); // %
     const card = document.createElement("div");
     card.className = "movie-card";
-    card.textContent = movie.title;
+    card.innerHTML = `
+      <h3>${movie.title}</h3>
+      <p><strong>Similarity:</strong> ${similarity}%</p>
+      <p><strong>Genres:</strong></p>
+      <div>${movie.genres
+        .map((g) => `<span class="genre-tag">${g}</span>`)
+        .join(" ")}</div>
+    `;
     resultDiv.appendChild(card);
   });
 }
