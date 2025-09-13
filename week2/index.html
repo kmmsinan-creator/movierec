@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlixRec - Movie Recommender</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Netflix-style navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-film"></i>
+                <span>FlixRec</span>
+            </div>
+            <div class="nav-menu">
+                <a href="#" class="nav-link active">Home</a>
+                <a href="#" class="nav-link">Movies</a>
+                <a href="#" class="nav-link">TV Shows</a>
+                <a href="#" class="nav-link">My List</a>
+            </div>
+            <div class="nav-actions">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search movies...">
+                </div>
+                <div class="profile">
+                    <img src="https://i.pravatar.cc/40" alt="Profile">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero banner -->
+    <div class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Unlimited Movie Recommendations</h1>
+            <p class="hero-description">Discover your next favorite movie based on what you love</p>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="container">
+        <div class="recommender-section">
+            <h2 class="section-title">Find Similar Movies</h2>
+            <p class="section-description">Select a movie you like, and we'll find similar ones for you!</p>
+            
+            <div class="recommender-controls">
+                <div class="select-wrapper">
+                    <select id="movie-select">
+                        <option value="" disabled selected>Select a movie...</option>
+                    </select>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <button id="recommend-btn" class="recommend-button">
+                    <i class="fas fa-play"></i> Get Recommendations
+                </button>
+            </div>
+            
+            <div id="result-box" class="result-container">
+                <p id="result" class="status-message">Data loaded. Please select a movie.</p>
+            </div>
+        </div>
+
+        <!-- Movie rows (Netflix style) -->
+        <div class="movie-row">
+            <h3 class="row-title">Popular on FlixRec</h3>
+            <div class="movie-scroller">
+                <div class="movie-card">
+                    <div class="movie-poster" style="background-image: url('https://source.unsplash.com/random/200x300/?movie')"></div>
+                    <div class="movie-info">
+                        <h4 class="movie-title">Movie Title 1</h4>
+                        <p class="movie-genres">Action, Adventure</p>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <div class="movie-poster" style="background-image: url('https://source.unsplash.com/random/200x300/?cinema')"></div>
+                    <div class="movie-info">
+                        <h4 class="movie-title">Movie Title 2</h4>
+                        <p class="movie-genres">Drama, Romance</p>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <div class="movie-poster" style="background-image: url('https://source.unsplash.com/random/200x300/?film')"></div>
+                    <div class="movie-info">
+                        <h4 class="movie-title">Movie Title 3</h4>
+                        <p class="movie-genres">Comedy</p>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <div class="movie-poster" style="background-image: url('https://source.unsplash.com/random/200x300/?actor')"></div>
+                    <div class="movie-info">
+                        <h4 class="movie-title">Movie Title 4</h4>
+                        <p class="movie-genres">Thriller, Mystery</p>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <div class="movie-poster" style="background-image: url('https://source.unsplash.com/random/200x300/?hollywood')"></div>
+                    <div class="movie-info">
+                        <h4 class="movie-title">Movie Title 5</h4>
+                        <p class="movie-genres">Sci-Fi, Action</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2023 FlixRec - Content-Based Movie Recommender System</p>
+    </footer>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
