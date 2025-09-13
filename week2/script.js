@@ -1,110 +1,93 @@
-// =============================
-// UI and Recommendation Logic (updated)
-// =============================
+// script.js
+// Handles UI interactions and recommendation logic
 
-/**
- * Initialize app once window loads
- */
+// Wait until page loads
 window.onload = async function () {
-  await loadData(); // load from data.js
-  populateMoviesDropdown();
-  document.getElementById("result").innerText =
-    "Data loaded. Please select a movie.";
-
-  // Attach click handler to the button (robust: works for normal & module scripts)
-  const btn = document.getElementById("recommend-btn");
-  if (btn) {
-    btn.addEventListener("click", getRecommendations);
+  try {
+    await loadData(); // from data.js
+    populateMoviesDropdown();
+    document.getElementById("result").innerText =
+      "Data loaded. Please select a movie.";
+  } catch (error) {
+    document.getElementById("result").innerText =
+      "Error loading data. Please check files.";
   }
+
+  // Attach button click
+  document.getElementById("recommend-btn").addEventListener("click", getRecommendations);
 };
 
-/**
- * Populate dropdown with movies sorted alphabetically
- */
+// Populate dropdown with movie list
 function populateMoviesDropdown() {
   const select = document.getElementById("movie-select");
+  select.innerHTML = ""; // clear old options if any
 
-  // Clear existing options to avoid duplicates if called again
-  select.innerHTML = "";
-
-  // Sort alphabetically by title
+  // Sort alphabetically
   const sortedMovies = [...movies].sort((a, b) =>
     a.title.localeCompare(b.title)
   );
 
-  // Add a helpful placeholder option
-  const placeholder = document.createElement("option");
-  placeholder.value = "";
-  placeholder.innerText = "-- select a movie --";
-  placeholder.selected = true;
-  placeholder.disabled = true;
-  select.appendChild(placeholder);
-
-  for (const movie of sortedMovies) {
+  sortedMovies.forEach((movie) => {
     const option = document.createElement("option");
-    option.value = String(movie.id); // store as string for safety
-    option.innerText = movie.title;
+    option.value = movie.id;
+    option.textContent = movie.title;
     select.appendChild(option);
-  }
+  });
 }
 
-/**
- * Main function to generate recommendations
- */
+// Main recommendation logic
 function getRecommendations() {
-  const resultElement = document.getElementById("result");
+  const select = document.getElementById("movie-select");
+  const selectedId = parseInt(select.value, 10);
 
-  try {
-    // show immediate feedback
-    resultElement.innerText = "Finding recommendations...";
-
-    // Step 1: Get user input
-    const rawValue = document.getElementById("movie-select").value;
-    const selectedId = Number(rawValue);
-
-    if (Number.isNaN(selectedId) || rawValue === "") {
-      resultElement.innerText = "Please choose a movie from the dropdown.";
-      return;
-    }
-
-    // Step 2: Find liked movie
-    const likedMovie = movies.find((m) => m.id === selectedId);
-    if (!likedMovie) {
-      resultElement.innerText = "Error: Movie not found. Please try again.";
-      return;
-    }
-
-    // Step 3: Prepare for similarity
-    const likedGenres = new Set(likedMovie.genres);
-    const candidateMovies = movies.filter((m) => m.id !== likedMovie.id);
-
-    // Step 4: Calculate scores
-    const scoredMovies = candidateMovies.map((candidate) => {
-      const candidateGenres = new Set(candidate.genres);
-      const intersection = new Set(
-        [...likedGenres].filter((g) => candidateGenres.has(g))
-      );
-      const union = new Set([...likedGenres, ...candidateGenres]);
-      const score = union.size === 0 ? 0 : intersection.size / union.size;
-      return { ...candidate, score };
-    });
-
-    // Step 5: Sort by score (descending)
-    scoredMovies.sort((a, b) => b.score - a.score);
-
-    // Step 6: Select top 2
-    const topRecommendations = scoredMovies.slice(0, 2);
-
-    // Step 7: Display result
-    if (topRecommendations.length > 0) {
-      const recTitles = topRecommendations.map((m) => m.title).join(", ");
-      resultElement.innerText = `Because you liked "${likedMovie.title}", we recommend: ${recTitles}`;
-    } else {
-      resultElement.innerText = `Sorry, no similar movies found for "${likedMovie.title}".`;
-    }
-  } catch (err) {
-    console.error("getRecommendations error:", err);
-    resultElement.innerText =
-      "An error occurred while generating recommendations. See console for details.";
+  if (!selectedId) {
+    document.getElementById("result").innerText =
+      "Please select a movie first.";
+    return;
   }
+
+  // Find liked movie
+  const likedMovie = movies.find((m) => m.id === selectedId);
+  if (!likedMovie) {
+    document.getElementById("result").innerText =
+      "Movie not found in dataset.";
+    return;
+  }
+
+  const likedGenres = new Set(likedMovie.genres);
+
+  // Exclude the liked movie itself
+  const candidateMovies = movies.filter((m) => m.id !== likedMovie.id);
+
+  // Score using Jaccard Similarity
+  const scoredMovies = candidateMovies.map((m) => {
+    const candidateGenres = new Set(m.genres);
+    const intersection = new Set(
+      [...likedGenres].filter((g) => candidateGenres.has(g))
+    );
+    const union = new Set([...likedGenres, ...candidateGenres]);
+    const score = union.size === 0 ? 0 : intersection.size / union.size;
+    return { ...m, score };
+  });
+
+  // Sort and take top 2
+  const topRecommendations = scoredMovies
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 2);
+
+  // Display as Netflix-style cards
+  const resultDiv = document.getElementById("result");
+  resultDiv.innerHTML = ""; // clear old results
+
+  if (topRecommendations.length === 0) {
+    resultDiv.innerHTML = "<p>No similar movies found.</p>";
+    return;
+  }
+
+  topRecommendations.forEach((movie) => {
+    const card = document.createElement("div");
+    card.className = "movie-card";
+    card.textContent = movie.title;
+    resultDiv.appendChild(card);
+  });
 }
