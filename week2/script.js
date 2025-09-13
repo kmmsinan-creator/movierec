@@ -1,45 +1,32 @@
 // Initialize application when window loads
 window.onload = async function() {
-    // Add scroll event listener for navbar
-    window.addEventListener('scroll', handleNavbarScroll);
-    
-    // Load data first
-    const success = await loadData();
-    
-    if (success) {
-        // Then populate the dropdown and update status
-        populateMoviesDropdown();
-        document.getElementById('result').textContent = 
-            'Data loaded. Please select a movie.';
-        document.getElementById('result').className = 'status-message';
+    try {
+        // Display loading message
+        const resultElement = document.getElementById('result');
+        resultElement.textContent = 'Loading movie data...';
+        resultElement.className = 'loading';
         
-        // Add event listener to recommendation button
-        document.getElementById('recommend-btn').addEventListener('click', getRecommendations);
+        // Load data
+        await loadData();
+        
+        // Populate dropdown and update status
+        populateMoviesDropdown();
+        resultElement.textContent = 'Data loaded. Please select a movie.';
+        resultElement.className = 'success';
+    } catch (error) {
+        console.error('Initialization error:', error);
+        // Error message is already set in loadData()
     }
 };
 
-/**
- * Handle navbar scroll effect
- */
-function handleNavbarScroll() {
-    const navbar = document.querySelector('.navbar');
-    if (window.scrollY > 50) {
-        navbar.classList.add('scrolled');
-    } else {
-        navbar.classList.remove('scrolled');
-    }
-}
-
-/**
- * Populate the movie dropdown with sorted movie titles
- */
+// Populate the movie dropdown with sorted titles
 function populateMoviesDropdown() {
     const selectElement = document.getElementById('movie-select');
     
-    // Clear the default option
+    // Clear existing options
     selectElement.innerHTML = '';
     
-    // Add a default option
+    // Add default option
     const defaultOption = document.createElement('option');
     defaultOption.value = '';
     defaultOption.textContent = 'Select a movie...';
@@ -48,11 +35,11 @@ function populateMoviesDropdown() {
     selectElement.appendChild(defaultOption);
     
     // Sort movies alphabetically by title
-    const sortedMovies = [...movies].sort((a, b) => 
-        a.title.localeCompare(b.title)
-    );
+    const sortedMovies = [...movies].sort((a, b) => {
+        return a.title.localeCompare(b.title);
+    });
     
-    // Add each movie as an option
+    // Add movie options
     sortedMovies.forEach(movie => {
         const option = document.createElement('option');
         option.value = movie.id;
@@ -61,37 +48,33 @@ function populateMoviesDropdown() {
     });
 }
 
-/**
- * Main function to calculate and display recommendations
- */
+// Main recommendation function
 function getRecommendations() {
-    // Step 1: Get user input
-    const selectedMovieId = parseInt(document.getElementById('movie-select').value);
+    const resultElement = document.getElementById('result');
     
-    // Validate selection
-    if (isNaN(selectedMovieId)) {
-        document.getElementById('result').textContent = 
-            'Please select a movie first.';
-        document.getElementById('result').className = 'error';
-        return;
-    }
-    
-    // Step 2: Find the liked movie
-    const likedMovie = movies.find(movie => movie.id === selectedMovieId);
-    if (!likedMovie) {
-        document.getElementById('result').textContent = 
-            'Error: Selected movie not found.';
-        document.getElementById('result').className = 'error';
-        return;
-    }
-    
-    // Show loading state
-    document.getElementById('result').textContent = 
-        `Finding recommendations for "${likedMovie.title}"...`;
-    document.getElementById('result').className = 'status-message';
-    
-    // Use setTimeout to allow the UI to update before heavy computation
-    setTimeout(() => {
+    try {
+        // Step 1: Get user input
+        const selectedMovieId = parseInt(document.getElementById('movie-select').value);
+        
+        if (isNaN(selectedMovieId)) {
+            resultElement.textContent = 'Please select a movie first.';
+            resultElement.className = 'error';
+            return;
+        }
+        
+        // Show loading state
+        resultElement.textContent = 'Finding recommendations...';
+        resultElement.className = 'loading';
+        
+        // Step 2: Find the liked movie
+        const likedMovie = movies.find(movie => movie.id === selectedMovieId);
+        
+        if (!likedMovie) {
+            resultElement.textContent = 'Selected movie not found in database.';
+            resultElement.className = 'error';
+            return;
+        }
+        
         // Step 3: Prepare for similarity calculation
         const likedGenres = new Set(likedMovie.genres);
         const candidateMovies = movies.filter(movie => movie.id !== likedMovie.id);
@@ -108,45 +91,40 @@ function getRecommendations() {
             // Calculate union
             const union = new Set([...likedGenres, ...candidateGenres]);
             
-            // Jaccard similarity = |Intersection| / |Union|
+            // Calculate Jaccard index
             const score = union.size > 0 ? intersection.size / union.size : 0;
             
             return {
-                ...candidate,
+                id: candidate.id,
+                title: candidate.title,
+                genres: candidate.genres,
                 score: score
             };
         });
         
-        // Step 5: Sort by score (descending)
+        // Step 5: Sort by score in descending order
         scoredMovies.sort((a, b) => b.score - a.score);
         
         // Step 6: Select top recommendations
-        const topRecommendations = scoredMovies.slice(0, 5);
+        const topRecommendations = scoredMovies.slice(0, 2);
         
         // Step 7: Display results
         if (topRecommendations.length > 0) {
-            let html = `<p>Because you liked <span class="highlight">${likedMovie.title}</span>, we recommend:</p>`;
-            html += '<div class="recommended-movies">';
+            const recommendationTitles = topRecommendations.map(movie => movie.title);
+            resultElement.innerHTML = `Because you liked <strong>"${likedMovie.title}"</strong>, we recommend:<br><br>`;
             
-            topRecommendations.forEach(movie => {
-                html += `
-                    <div class="recommended-movie">
-                        <div class="movie-poster" style="background-image: url('https://source.unsplash.com/random/200x300/?movie,${movie.genres[0]}')"></div>
-                        <div class="movie-details">
-                            <h4>${movie.title}</h4>
-                            <p>Genres: ${movie.genres.join(', ')}</p>
-                            <p class="similarity-score">Similarity: ${(movie.score * 100).toFixed(1)}%</p>
-                        </div>
-                    </div>
-                `;
+            topRecommendations.forEach((movie, index) => {
+                resultElement.innerHTML += `${index + 1}. ${movie.title} (${(movie.score * 100).toFixed(0)}% match)<br>`;
             });
             
-            html += '</div>';
-            document.getElementById('result-box').innerHTML = html;
+            resultElement.className = 'success';
         } else {
-            document.getElementById('result').textContent = 
-                'No recommendations found.';
-            document.getElementById('result').className = 'error';
+            resultElement.textContent = 'No recommendations found for this movie.';
+            resultElement.className = 'error';
         }
-    }, 100);
+    } catch (error) {
+        console.error('Error in getRecommendations:', error);
+        resultElement.textContent = 'An error occurred while generating recommendations.';
+        resultElement.className = 'error';
+    }
 }
