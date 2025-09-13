@@ -1,126 +1,74 @@
-/* Reset and base styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
+/* General page style */
 body {
-    font-family: 'Helvetica', 'Arial', sans-serif;
-    background-color: #f4f7f6;
-    color: #333;
-    line-height: 1.6;
-    padding: 20px;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  font-family: Helvetica, Arial, sans-serif;
+  background-color: #f4f7f6;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
 }
 
+/* Main container */
 .container {
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    padding: 30px;
-    width: 90%;
-    max-width: 600px;
-    text-align: center;
+  background: #ffffff;
+  margin-top: 50px;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  text-align: center;
+  width: 500px;
+  max-width: 90%;
 }
 
+/* Heading */
 h1 {
-    color: #2c3e50;
-    margin-bottom: 15px;
-    font-size: 28px;
+  margin-bottom: 15px;
+  color: #333;
 }
 
+/* Instructions */
 p {
-    margin-bottom: 20px;
-    color: #7f8c8d;
+  color: #555;
 }
 
-.controls {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-bottom: 25px;
+/* Dropdown menu */
+#movie-select {
+  width: 80%;
+  padding: 10px;
+  margin: 15px 0;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
 }
 
-select, button {
-    padding: 12px 15px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    font-size: 16px;
-    transition: all 0.3s ease;
-}
-
-select {
-    background-color: white;
-    cursor: pointer;
-}
-
-select:focus {
-    outline: none;
-    border-color: #3498db;
-    box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
-}
-
+/* Button style */
 button {
-    background-color: #3498db;
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  background-color: #007bff;
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 button:hover {
-    background-color: #2980b9;
-    transform: translateY(-2px);
+  background-color: #0056b3;
 }
 
-button:active {
-    transform: translateY(0);
-}
-
+/* Result area */
 #result-box {
-    background-color: #f8f9fa;
-    border-radius: 5px;
-    padding: 20px;
-    margin-top: 10px;
-    min-height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  border: 1px solid #ddd;
 }
 
 #result {
-    font-weight: bold;
-    color: #2c3e50;
-    margin: 0;
-}
-
-.loading {
-    color: #7f8c8d;
-    font-style: italic;
-}
-
-.error {
-    color: #e74c3c;
-}
-
-.success {
-    color: #27ae60;
-}
-
-@media (max-width: 480px) {
-    .container {
-        padding: 20px;
-    }
-    
-    h1 {
-        font-size: 24px;
-    }
-    
-    select, button {
-        font-size: 14px;
-    }
+  font-weight: bold;
+  color: #333;
 }
