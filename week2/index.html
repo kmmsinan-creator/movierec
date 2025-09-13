@@ -2,24 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Movie Recommender</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MovieFlix</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <!-- Navbar -->
   <header>
-    <h1>MovieFlix</h1>
-
-    <!-- simple nav + search -->
+    <h1 class="logo">MovieFlix</h1>
     <nav>
       <a href="#">Home</a>
       <a href="#">Movies</a>
       <a href="#">Series</a>
       <a href="#">My List</a>
     </nav>
-
-    <div class="search-box" style="margin-left:auto;">
+    <div class="search-box">
       <input type="text" id="search-input" placeholder="Search movies...">
     </div>
   </header>
@@ -27,8 +23,10 @@
   <!-- Hero Banner -->
   <section class="hero">
     <div class="hero-text">
-      <h2>Discover Movies</h2>
-      <p>Your next favorite movie is just one click away.</p>
+      <h2>Featured Movie</h2>
+      <p>Discover something new today</p>
+      <button class="btn-play">▶ Play</button>
+      <button class="btn-more">ℹ More Info</button>
     </div>
   </section>
 
@@ -36,12 +34,7 @@
   <div class="container">
     <!-- Controls -->
     <div class="controls">
-      <!-- Select starts with an explicit placeholder option (shown before JS runs).
-           populateMoviesDropdown will keep a placeholder as the first option too. -->
-      <select id="movie-select">
-        <option value="" disabled selected>-- Select a movie --</option>
-      </select>
-
+      <select id="movie-select"></select>
       <button id="recommend-btn" type="button">Get Recommendations</button>
     </div>
 
@@ -51,19 +44,23 @@
       <div id="result" class="recommend-row">Loading data...</div>
     </div>
 
-    <!-- Extra Sections (Netflix-style rows) -->
+    <!-- Extra Sections like Netflix -->
     <section class="movie-section">
       <h2>Trending Now</h2>
-      <div class="movie-row" id="trending-row"></div>
+      <div class="movie-row" id="trending-row">
+        <!-- Movie cards added dynamically -->
+      </div>
     </section>
 
     <section class="movie-section">
       <h2>Popular in Drama</h2>
-      <div class="movie-row" id="drama-row"></div>
+      <div class="movie-row" id="drama-row">
+        <!-- Movie cards added dynamically -->
+      </div>
     </section>
   </div>
 
-  <!-- Scripts (load data.js first) -->
+  <!-- Scripts -->
   <script src="data.js"></script>
   <script src="script.js"></script>
 </body>
