@@ -1,126 +1,114 @@
 /* Reset */
 * {
-  box-sizing: border-box;
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
-/* General page style */
 body {
   font-family: "Segoe UI", Helvetica, Arial, sans-serif;
-  background: linear-gradient(135deg, #4b0000, #800000);
+  background: #141414; /* Dark Netflix look */
   color: #fff;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
-/* Header (movie site style) */
+/* Navbar */
 header {
   width: 100%;
-  background: #300000;
+  background: #000;
   padding: 15px 30px;
-  text-align: center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.7);
 }
 
 header h1 {
-  color: #ffd700; /* gold accent */
+  color: #e50914; /* Netflix red */
   font-size: 28px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
+  font-weight: bold;
+  letter-spacing: 1px;
 }
 
 /* Main container */
 .container {
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(10px);
-  margin-top: 40px;
-  padding: 30px;
-  border-radius: 14px;
-  width: 600px;
-  max-width: 95%;
+  margin: 40px auto;
+  padding: 20px;
+  max-width: 1000px;
   text-align: center;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
 }
 
 /* Instructions */
 .container p {
   margin: 15px 0;
-  font-size: 15px;
-  color: #f0e6e6;
+  font-size: 18px;
+  color: #ccc;
 }
 
-/* Dropdown menu */
+/* Dropdown */
 #movie-select {
-  width: 100%;
   padding: 12px;
   margin: 15px 0;
-  border-radius: 8px;
-  border: 1px solid #c0392b;
-  background: #5a1a1a;
+  border-radius: 6px;
+  border: none;
+  background: #333;
   color: #fff;
-  font-size: 15px;
+  font-size: 16px;
   outline: none;
   cursor: pointer;
-  transition: 0.3s;
 }
 
 #movie-select:hover {
-  background: #751c1c;
+  background: #444;
 }
 
 /* Button */
 button {
   padding: 12px 25px;
+  margin-top: 10px;
   border: none;
-  border-radius: 8px;
-  background: #e50914; /* Netflix-style red */
+  border-radius: 6px;
+  background: #e50914; 
   color: #fff;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(229, 9, 20, 0.5);
+  transition: 0.3s;
 }
 
 button:hover {
   background: #b20710;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(229, 9, 20, 0.7);
+  transform: scale(1.05);
 }
 
-/* Result box styled like movie cards */
+/* Result box */
 #result-box {
-  margin-top: 25px;
-  padding: 20px;
-  background: rgba(0, 0, 0, 0.5);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-/* Recommendation text as movie-card style */
-#result {
-  font-size: 16px;
-  color: #fffbea;
-  line-height: 1.5;
-}
-
-/* Movie card design for recommendations */
-.movie-card {
-  background: #1c1c1c;
-  padding: 12px;
-  margin: 10px 0;
-  border-radius: 8px;
-  border-left: 4px solid #e50914;
+  margin-top: 40px;
   text-align: left;
+}
+
+/* Grid of movie cards */
+#result {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+}
+
+/* Movie card (without posters) */
+.movie-card {
+  background: linear-gradient(145deg, #222, #111);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
   font-weight: bold;
+  font-size: 16px;
   color: #fff;
-  transition: 0.3s;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .movie-card:hover {
-  background: #292929;
-  transform: scale(1.02);
+  transform: scale(1.08);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+  background: linear-gradient(145deg, #e50914, #111);
 }
