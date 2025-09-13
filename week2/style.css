@@ -1,74 +1,103 @@
 /* General page style */
 body {
-  font-family: Helvetica, Arial, sans-serif;
-  background-color: #f4f7f6;
+  font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
   margin: 0;
   padding: 0;
   display: flex;
   justify-content: center;
   align-items: flex-start;
   min-height: 100vh;
+  color: #fff;
 }
 
-/* Main container */
+/* Main container with glass effect */
 .container {
-  background: #ffffff;
-  margin-top: 50px;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  margin-top: 60px;
+  padding: 35px 30px;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
   text-align: center;
-  width: 500px;
+  width: 520px;
   max-width: 90%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 /* Heading */
 h1 {
   margin-bottom: 15px;
-  color: #333;
+  color: #ffd700; /* cinematic gold */
+  font-size: 26px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
 /* Instructions */
 p {
-  color: #555;
+  color: #ddd;
+  margin-bottom: 15px;
+  font-size: 15px;
 }
 
 /* Dropdown menu */
 #movie-select {
-  width: 80%;
-  padding: 10px;
+  width: 100%;
+  padding: 12px;
   margin: 15px 0;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #444;
+  background: #1f2a30;
+  color: #fff;
+  font-size: 15px;
+  outline: none;
+  appearance: none;
+  cursor: pointer;
 }
 
 /* Button style */
 button {
-  padding: 10px 20px;
+  padding: 12px 25px;
   border: none;
-  border-radius: 6px;
-  background-color: #007bff;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #007bff, #00c6ff);
   color: #fff;
-  font-size: 15px;
+  font-size: 16px;
+  font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
 }
 
 button:hover {
-  background-color: #0056b3;
+  background: linear-gradient(90deg, #0056b3, #0096c7);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 123, 255, 0.6);
 }
 
 /* Result area */
 #result-box {
-  margin-top: 20px;
-  padding: 15px;
-  background-color: #f9f9f9;
-  border-radius: 6px;
-  border: 1px solid #ddd;
+  margin-top: 25px;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 #result {
   font-weight: bold;
-  color: #333;
+  font-size: 16px;
+  color: #f1f1f1;
+  line-height: 1.5;
+}
+
+/* Add subtle fade-in for result */
+#result-box {
+  animation: fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
