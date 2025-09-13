@@ -1,83 +1,77 @@
-// Global variables for movie and rating data
+// =============================
+// Data Handling Module
+// =============================
+
+// Global arrays for movies and ratings
 let movies = [];
 let ratings = [];
 
-// Genre names as defined in the u.item file
-const genres = [
-    "Action", "Adventure", "Animation", "Children's", "Comedy", "Crime", 
-    "Documentary", "Drama", "Fantasy", "Film-Noir", "Horror", "Musical", 
-    "Mystery", "Romance", "Sci-Fi", "Thriller", "War", "Western"
-];
-
-// Primary function to load data from files
+/**
+ * Main async function to load and parse movie & rating data
+ */
 async function loadData() {
-    try {
-        // Load and parse movie data
-        const moviesResponse = await fetch('u.item');
-        if (!moviesResponse.ok) {
-            throw new Error(`Failed to load movie data: ${moviesResponse.status}`);
-        }
-        const moviesText = await moviesResponse.text();
-        parseItemData(moviesText);
-        
-        // Load and parse rating data
-        const ratingsResponse = await fetch('u.data');
-        if (!ratingsResponse.ok) {
-            throw new Error(`Failed to load rating data: ${ratingsResponse.status}`);
-        }
-        const ratingsText = await ratingsResponse.text();
-        parseRatingData(ratingsText);
-        
-        return { movies, ratings };
-    } catch (error) {
-        console.error('Error loading data:', error);
-        document.getElementById('result').textContent = 
-            `Error: ${error.message}. Please make sure u.item and u.data files are available.`;
-        document.getElementById('result').className = 'error';
-        throw error;
-    }
+  try {
+    // Load u.item (movies data)
+    const itemResponse = await fetch("u.item");
+    const itemText = await itemResponse.text();
+    parseItemData(itemText);
+
+    // Load u.data (ratings data)
+    const dataResponse = await fetch("u.data");
+    const dataText = await dataResponse.text();
+    parseRatingData(dataText);
+  } catch (error) {
+    // Display error in result box if something fails
+    document.getElementById("result").innerText =
+      "Error loading data: " + error.message;
+  }
 }
 
-// Parse movie data from text
+/**
+ * Parse u.item file text and populate movies array
+ * @param {string} text - raw file content
+ */
 function parseItemData(text) {
-    const lines = text.split('\n');
-    movies = []; // Reset movies array
-    
-    for (const line of lines) {
-        if (line.trim() === '') continue;
-        
-        const fields = line.split('|');
-        if (fields.length < 5) continue;
-        
-        const id = parseInt(fields[0]);
-        const title = fields[1];
-        const genreFields = fields.slice(5, 24); // Get the 19 genre indicator fields
-        
-        // Convert genre indicators to an array of genre names
-        const movieGenres = genreFields.map((indicator, index) => {
-            return indicator === '1' ? genres[index] : null;
-        }).filter(genre => genre !== null);
-        
-        movies.push({ id, title, genres: movieGenres });
-    }
+  const genreNames = [
+    "Unknown", "Action", "Adventure", "Animation", "Children's",
+    "Comedy", "Crime", "Documentary", "Drama", "Fantasy",
+    "Film-Noir", "Horror", "Musical", "Mystery", "Romance",
+    "Sci-Fi", "Thriller", "War", "Western"
+  ];
+
+  const lines = text.split("\n");
+
+  for (const line of lines) {
+    if (line.trim() === "") continue;
+
+    const parts = line.split("|");
+    const id = parseInt(parts[0]);
+    const title = parts[1];
+
+    // Last 19 entries are genres (0 or 1)
+    const genreFlags = parts.slice(-19);
+    const genres = genreNames.filter((_, idx) => genreFlags[idx] === "1");
+
+    movies.push({ id, title, genres });
+  }
 }
 
-// Parse rating data from text
+/**
+ * Parse u.data file text and populate ratings array
+ * @param {string} text - raw file content
+ */
 function parseRatingData(text) {
-    const lines = text.split('\n');
-    ratings = []; // Reset ratings array
-    
-    for (const line of lines) {
-        if (line.trim() === '') continue;
-        
-        const fields = line.split('\t');
-        if (fields.length < 4) continue;
-        
-        const userId = parseInt(fields[0]);
-        const itemId = parseInt(fields[1]);
-        const rating = parseFloat(fields[2]);
-        const timestamp = parseInt(fields[3]);
-        
-        ratings.push({ userId, itemId, rating, timestamp });
-    }
+  const lines = text.split("\n");
+
+  for (const line of lines) {
+    if (line.trim() === "") continue;
+
+    const parts = line.split("\t");
+    const userId = parseInt(parts[0]);
+    const itemId = parseInt(parts[1]);
+    const rating = parseInt(parts[2]);
+    const timestamp = parseInt(parts[3]);
+
+    ratings.push({ userId, itemId, rating, timestamp });
+  }
 }
