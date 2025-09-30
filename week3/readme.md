@@ -36,14 +36,14 @@ The project consists of **four main files**:
 <script src="script.js"></script>
 
 ----
-📌 4. style.css Instructions
+## 📌 4. style.css Instructions
 •	Apply a modern, clean, and centered layout.
 •	Keep the design professional and user-friendly.
 •	Use consistent styling for dropdowns and buttons.
 •	Apply responsive design rules to look good on desktop and mobile.
 •	Follow the modern styling specifications used in previous exercises (container, box shadows, clean typography).
 
-📌 5. data.js Instructions
+## 📌 5. data.js Instructions
 This file handles data loading and parsing.
 •	Must contain:
 o	loadData() → loads both u.item and u.data
@@ -53,7 +53,7 @@ o	parseRatingData(text) → parses user–movie ratings
 o	numUsers
 o	numMovies
 
-📌 6. script.js Instructions
+## 📌 6. script.js Instructions
 This file contains the TensorFlow.js model definition, training, and prediction logic.
 🔹 Global Variables
 •	model → holds the trained TensorFlow.js model
