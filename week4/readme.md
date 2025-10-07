@@ -96,10 +96,9 @@ After training:
 
 ## 🧑‍💻 Credits
 
-Created by: *KMM Sinan*  
+Created by: *Koyam Moopa Mohammad Sinan*  
 Role: Front-end ML Engineer (Student Project)  
-Instructor: Professor [Your Professor’s Name]  
-Course: Web-based Machine Learning Systems
+Course: Recommended Systems
 
 ---
 
