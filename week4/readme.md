@@ -50,6 +50,7 @@ const hidden1 = tf.layers.dense({units: 64, activation: 'relu'}).apply(combined)
 const hidden2 = tf.layers.dense({units: 32, activation: 'relu'}).apply(hidden1);
 const output = tf.layers.dense({units: 1, activation: 'sigmoid'}).apply(hidden2);
 
+
 👉 This part makes it a Deep Two-Tower model.
 You can mention:
 “Here we add hidden layers to capture non-linear patterns between users and items.”
