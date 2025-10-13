@@ -1,70 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>Personalized Diet Recommender — Rule-based + Deep ML</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Personalized Diet Plan Recommender</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- External CSS -->
   <link rel="stylesheet" href="style.css">
-  <!-- Chart.js for visualization -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <!-- TensorFlow.js -->
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0/dist/tf.min.js"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
-  <header>
-    <div class="brand">HealthTaste • Diet Recommender</div>
-    <div class="hint">Put <code>/data/Personalized_Diet_Recommendations.csv</code> next to this page</div>
+  <header class="navbar">
+    <div class="logo">🍏 DietPlan Recommender</div>
+    <nav>
+      <ul>
+        <li><a href="#train">Train Model</a></li>
+        <li><a href="#charts">Training Charts</a></li>
+        <li><a href="#predict">Predict</a></li>
+      </ul>
+    </nav>
   </header>
 
-  <main>
-    <section class="panel controls">
-      <div class="row">
-        <button id="btn-load">Load Dataset</button>
-        <button id="btn-recommend" disabled>Rule-based Recommend</button>
-        <button id="btn-train-ml" disabled>Train ML Model</button>
-        <button id="btn-predict-ml" disabled>Predict (ML)</button>
+  <section id="hero">
+    <h1>Personalized Medical Diet Plan Recommendations</h1>
+    <p>
+      Train your AI model to recommend the best diet plans based on user health data.
+    </p>
+    <button onclick="trainModel()" class="btn-train">🚀 Start Training</button>
+  </section>
 
-        <label>ML epochs: <input id="cfg-epochs" type="number" value="8" min="1" max="100" step="1"></label>
-        <label>Batch size: <input id="cfg-batch" type="number" value="64" min="8" max="1024" step="8"></label>
-        <label>Embed dim (ML hidden): <input id="cfg-dim" type="number" value="64" min="8" max="256" step="8"></label>
+  <section id="train" class="container">
+    <h2>Training / Evaluation</h2>
+    <div id="log" class="log-box">Training logs will appear here...</div>
+  </section>
+
+  <section id="charts" class="container">
+    <h2>Model Performance</h2>
+    <div class="chart-grid">
+      <div class="chart-box">
+        <canvas id="lossChart"></canvas>
       </div>
-
-      <div class="row" style="margin-top:10px;">
-        <label for="user-select">Select User:</label>
-        <select id="user-select"><option value="">-- load dataset --</option></select>
-
-        <label for="topk">Top-K:</label>
-        <input id="topk" type="number" value="5" min="1" max="20" style="width:70px;margin-right:10px;">
-
-        <span id="status" class="status">Idle</span>
+      <div class="chart-box">
+        <canvas id="accChart"></canvas>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="panel split">
-      <div>
-        <h3>Nutrition Comparison</h3>
-        <div id="result" class="result">Load data to begin.</div>
-        <canvas id="nutritionChart" width="480" height="260"></canvas>
-      </div>
-
-      <div>
-        <h3>Recommendations Comparison</h3>
-        <div id="rec-wrap"></div>
-      </div>
-    </section>
-
-    <section class="panel">
-      <h3>Training / Evaluation</h3>
-      <div id="train-log" class="logbox">No training yet.</div>
-      <canvas id="lossChart" width="640" height="200"></canvas>
-    </section>
-  </main>
+  <section id="predict" class="container">
+    <h2>Try Prediction</h2>
+    <p>Click the button below to get a sample diet recommendation.</p>
+    <button onclick="predictDiet()" class="btn-predict">🥗 Predict My Diet</button>
+    <div id="result" class="result-box"></div>
+  </section>
 
   <footer>
-    <small>Prototype — not medical advice. For demo/academic use only.</small>
+    <p>© 2025 Personalized Diet Recommender — Built for Academic Project</p>
   </footer>
 
-  <script src="data.js"></script>
+  <!-- External JS -->
   <script src="script.js"></script>
 </body>
 </html>
