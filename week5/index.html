@@ -1,70 +1,125 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>Personalized Diet Recommender — Rule-based + Deep ML</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="style.css">
-  <!-- Chart.js for visualization -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- TensorFlow.js -->
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
-</head>
-<body>
-  <header>
-    <div class="brand">HealthTaste • Diet Recommender</div>
-    <div class="hint">Put <code>/data/Personalized_Diet_Recommendations.csv</code> next to this page</div>
-  </header>
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  background-color: #141414;
+  color: #fff;
+  overflow-x: hidden;
+}
 
-  <main>
-    <section class="panel controls">
-      <div class="row">
-        <button id="btn-load">Load Dataset</button>
-        <button id="btn-recommend" disabled>Rule-based Recommend</button>
-        <button id="btn-train-ml" disabled>Train ML Model</button>
-        <button id="btn-predict-ml" disabled>Predict (ML)</button>
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #202020;
+  padding: 15px 50px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
 
-        <label>ML epochs: <input id="cfg-epochs" type="number" value="8" min="1" max="100" step="1"></label>
-        <label>Batch size: <input id="cfg-batch" type="number" value="64" min="8" max="1024" step="8"></label>
-        <label>Embed dim (ML hidden): <input id="cfg-dim" type="number" value="64" min="8" max="256" step="8"></label>
-      </div>
+.logo {
+  font-size: 22px;
+  font-weight: 600;
+  color: #00e676;
+}
 
-      <div class="row" style="margin-top:10px;">
-        <label for="user-select">Select User:</label>
-        <select id="user-select"><option value="">-- load dataset --</option></select>
+.navbar ul {
+  list-style: none;
+  display: flex;
+  gap: 25px;
+  margin: 0;
+}
 
-        <label for="topk">Top-K:</label>
-        <input id="topk" type="number" value="5" min="1" max="20" style="width:70px;margin-right:10px;">
+.navbar ul li a {
+  text-decoration: none;
+  color: #fff;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
 
-        <span id="status" class="status">Idle</span>
-      </div>
-    </section>
+.navbar ul li a:hover {
+  color: #00e676;
+}
 
-    <section class="panel split">
-      <div>
-        <h3>Nutrition Comparison</h3>
-        <div id="result" class="result">Load data to begin.</div>
-        <canvas id="nutritionChart" width="480" height="260"></canvas>
-      </div>
+#hero {
+  text-align: center;
+  padding: 80px 20px;
+  background: linear-gradient(to right, #7b4397, #dc2430);
+}
 
-      <div>
-        <h3>Recommendations Comparison</h3>
-        <div id="rec-wrap"></div>
-      </div>
-    </section>
+#hero h1 {
+  font-size: 2.4em;
+  margin-bottom: 15px;
+}
 
-    <section class="panel">
-      <h3>Training / Evaluation</h3>
-      <div id="train-log" class="logbox">No training yet.</div>
-      <canvas id="lossChart" width="640" height="200"></canvas>
-    </section>
-  </main>
+#hero p {
+  font-size: 1.1em;
+  margin-bottom: 25px;
+  color: #f1f1f1;
+}
 
-  <footer>
-    <small>Prototype — not medical advice. For demo/academic use only.</small>
-  </footer>
+.btn-train, .btn-predict {
+  padding: 12px 28px;
+  border: none;
+  border-radius: 30px;
+  background: #00e676;
+  color: #141414;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
 
-  <script src="data.js"></script>
-  <script src="script.js"></script>
-</body>
-</html>
+.btn-train:hover, .btn-predict:hover {
+  background: #00c853;
+}
+
+.container {
+  padding: 60px 10%;
+}
+
+h2 {
+  text-align: center;
+  color: #00e676;
+  margin-bottom: 25px;
+}
+
+.log-box {
+  background: #1f1f1f;
+  padding: 20px;
+  border-radius: 12px;
+  height: 200px;
+  overflow-y: auto;
+  font-family: monospace;
+  font-size: 14px;
+  border-left: 4px solid #00e676;
+}
+
+.chart-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
+.chart-box {
+  background: #1f1f1f;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+}
+
+.result-box {
+  text-align: center;
+  margin-top: 20px;
+  background: #1f1f1f;
+  padding: 15px;
+  border-radius: 10px;
+  font-size: 1.2em;
+  color: #00e676;
+}
+
+footer {
+  text-align: center;
+  padding: 15px 0;
+  background: #202020;
+  font-size: 14px;
+  color: #aaa;
+}
