@@ -1,202 +1,119 @@
-let model;
-let lossChart;
-let accChart;
-let historyLoss = [];
-let valLossHistory = [];
-let historyAcc = [];
-let valAccHistory = [];
+// script.js
+let nutritionChart = null;
 
-// Utility to draw Loss and Accuracy charts
-function drawCharts() {
-  const lossCtx = document.getElementById("lossChart").getContext("2d");
-  const accCtx = document.getElementById("accChart").getContext("2d");
+document.getElementById('load-btn').addEventListener('click', loadDataset);
+document.getElementById('recommend-btn').addEventListener('click', recommendDiet);
 
-  if (lossChart) lossChart.destroy();
-  if (accChart) accChart.destroy();
+function recommendDiet() {
+  const userId = document.getElementById('user-select').value;
+  if (!userId) {
+    document.getElementById('result').textContent = '⚠️ Please select a user first.';
+    return;
+  }
 
-  // ---- Loss Chart ----
-  lossChart = new Chart(lossCtx, {
-    type: "line",
+  // find user by User_ID or by fallback "row-#" used in populateUsers
+  const userData = dietData.find(d => {
+    const uid = (d.User_ID ?? d['User ID'] ?? d.id ?? '').toString().trim();
+    if (uid) return uid === userId;
+    // fallback: try matching the "row-N" token we created
+    const idx = dietData.indexOf(d);
+    return userId === `row-${idx+1}`;
+  });
+
+  if (!userData) {
+    document.getElementById('result').textContent = '❌ User not found in dataset.';
+    console.warn('User not found for id:', userId, 'dataset length:', dietData.length);
+    return;
+  }
+
+  // Ensure BMI is numeric
+  const userBMI = (typeof userData.BMI === 'number') ? userData.BMI : parseFloat(userData.BMI);
+  const userGoal = userData.Goal ?? '';
+
+  // Basic rule-based recommendation: find similar BMI + Goal
+  const similarUsers = dietData.filter(d => {
+    const dGoal = d.Goal ?? '';
+    const dBMI = (typeof d.BMI === 'number') ? d.BMI : parseFloat(d.BMI);
+    if (!dGoal || isNaN(dBMI) || isNaN(userBMI)) return false;
+    return dGoal === userGoal && Math.abs(dBMI - userBMI) < 2;
+  });
+
+  // If no similar users found, relax filter to same Goal only
+  let fallbackUsed = false;
+  let sitter = similarUsers;
+  if (sitter.length === 0) {
+    sitter = dietData.filter(d => (d.Goal ?? '') === userGoal);
+    fallbackUsed = sitter.length > 0;
+  }
+
+  // safe average function
+  function safeAvg(values) {
+    const nums = values.map(v => Number(v)).filter(n => !isNaN(n));
+    if (nums.length === 0) return 0;
+    return nums.reduce((a,b)=>a+b, 0) / nums.length;
+  }
+
+  const avgCalories = safeAvg(sitter.map(d => d.Calories ?? d['Calories']));
+  const avgProtein = safeAvg(sitter.map(d => d.Protein ?? d['Protein']));
+  const avgCarbs    = safeAvg(sitter.map(d => d.Carbs ?? d['Carbs']));
+  const avgFat      = safeAvg(sitter.map(d => d.Fat ?? d['Fat']));
+
+  const recommendedDiet = (sitter[0] && (sitter[0].Recommended_Diet || sitter[0]['Recommended_Diet'])) || userData.Recommended_Diet || 'Balanced Diet';
+
+  document.getElementById('result').innerHTML = `
+    <h3>Recommended Diet for User ${userId}</h3>
+    <p><strong>Goal:</strong> ${userGoal}</p>
+    <p><strong>Suggested Diet Type:</strong> ${recommendedDiet}</p>
+    <p><strong>Average Nutrition (from ${sitter.length} similar users${fallbackUsed ? ' — fallback by Goal only' : ''}):</strong></p>
+    <ul>
+      <li>Calories: ${avgCalories.toFixed(1)} kcal</li>
+      <li>Protein: ${avgProtein.toFixed(1)} g</li>
+      <li>Carbs: ${avgCarbs.toFixed(1)} g</li>
+      <li>Fat: ${avgFat.toFixed(1)} g</li>
+    </ul>
+  `;
+
+  // draw chart reads numeric or attempts to parse
+  drawNutritionChart(userData, { avgCalories, avgProtein, avgCarbs, avgFat });
+}
+  
+function drawNutritionChart(user, rec) {
+  const ctx = document.getElementById('nutritionChart').getContext('2d');
+  const labels = ['Calories', 'Protein', 'Carbs', 'Fat'];
+
+  const userData = [
+    Number(user.Calories ?? user['Calories']) || 0,
+    Number(user.Protein ?? user['Protein']) || 0,
+    Number(user.Carbs ?? user['Carbs']) || 0,
+    Number(user.Fat ?? user['Fat']) || 0
+  ];
+  const recData = [rec.avgCalories || 0, rec.avgProtein || 0, rec.avgCarbs || 0, rec.avgFat || 0];
+
+  if (nutritionChart) nutritionChart.destroy();
+
+  nutritionChart = new Chart(ctx, {
+    type: 'bar',
     data: {
-      labels: historyLoss.map((_, i) => i + 1),
+      labels,
       datasets: [
         {
-          label: "Train Loss",
-          data: historyLoss,
-          borderColor: "#ff8a65",
-          backgroundColor: "rgba(255,138,101,0.15)",
-          fill: true,
-          tension: 0.35,
-          borderWidth: 2,
-          pointRadius: 3,
+          label: 'Current User',
+          data: userData,
+          backgroundColor: 'rgba(255, 99, 132, 0.6)',
         },
         {
-          label: "Validation Loss",
-          data: valLossHistory,
-          borderColor: "#42a5f5",
-          backgroundColor: "rgba(66,165,245,0.15)",
-          fill: true,
-          tension: 0.35,
-          borderWidth: 2,
-          pointRadius: 3,
+          label: 'Recommended Average',
+          data: recData,
+          backgroundColor: 'rgba(54, 162, 235, 0.6)',
         },
       ],
     },
     options: {
       responsive: true,
       plugins: {
-        legend: {
-          labels: { color: "#fff", font: { weight: "bold" } },
-        },
-        title: {
-          display: true,
-          text: "Model Loss per Epoch",
-          color: "#fff",
-          font: { size: 16, weight: "bold" },
-        },
+        title: { display: true, text: 'Nutrition Comparison' },
       },
-      scales: {
-        x: {
-          title: { display: true, text: "Epoch", color: "#ccc" },
-          ticks: { color: "#ccc" },
-          grid: { color: "rgba(255,255,255,0.05)" },
-        },
-        y: {
-          title: { display: true, text: "Loss", color: "#ccc" },
-          ticks: { color: "#ccc" },
-          grid: { color: "rgba(255,255,255,0.05)" },
-        },
-      },
+      scales: { y: { beginAtZero: true } },
     },
   });
-
-  // ---- Accuracy Chart ----
-  accChart = new Chart(accCtx, {
-    type: "line",
-    data: {
-      labels: historyAcc.map((_, i) => i + 1),
-      datasets: [
-        {
-          label: "Train Accuracy",
-          data: historyAcc,
-          borderColor: "#81c784",
-          backgroundColor: "rgba(129,199,132,0.15)",
-          fill: true,
-          tension: 0.35,
-          borderWidth: 2,
-          pointRadius: 3,
-        },
-        {
-          label: "Validation Accuracy",
-          data: valAccHistory,
-          borderColor: "#fdd835",
-          backgroundColor: "rgba(253,216,53,0.15)",
-          fill: true,
-          tension: 0.35,
-          borderWidth: 2,
-          pointRadius: 3,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: {
-          labels: { color: "#fff", font: { weight: "bold" } },
-        },
-        title: {
-          display: true,
-          text: "Model Accuracy per Epoch",
-          color: "#fff",
-          font: { size: 16, weight: "bold" },
-        },
-      },
-      scales: {
-        x: {
-          title: { display: true, text: "Epoch", color: "#ccc" },
-          ticks: { color: "#ccc" },
-          grid: { color: "rgba(255,255,255,0.05)" },
-        },
-        y: {
-          title: { display: true, text: "Accuracy", color: "#ccc" },
-          min: 0,
-          max: 1,
-          ticks: {
-            color: "#ccc",
-            callback: (v) => (v * 100).toFixed(0) + "%",
-          },
-          grid: { color: "rgba(255,255,255,0.05)" },
-        },
-      },
-    },
-  });
-}
-
-// ---- Training Function ----
-async function trainModel() {
-  const logEl = document.getElementById("log");
-  logEl.innerHTML = "<b>Training started...</b><br>";
-
-  // Mock dataset creation (replace with your CSV load or feature extraction)
-  const numSamples = 200;
-  const numFeatures = 8;
-  const X = tf.randomNormal([numSamples, numFeatures]);
-  const y = tf.oneHot(tf.randomUniform([numSamples], 0, 3, "int32"), 3);
-
-  model = tf.sequential();
-  model.add(tf.layers.dense({ units: 32, inputShape: [numFeatures], activation: "relu" }));
-  model.add(tf.layers.dense({ units: 16, activation: "relu" }));
-  model.add(tf.layers.dense({ units: 3, activation: "softmax" }));
-
-  model.compile({
-    optimizer: tf.train.adam(0.001),
-    loss: "categoricalCrossentropy",
-    metrics: ["accuracy"],
-  });
-
-  historyLoss = [];
-  valLossHistory = [];
-  historyAcc = [];
-  valAccHistory = [];
-
-  const epochs = 20;
-  await model.fit(X, y, {
-    epochs,
-    validationSplit: 0.2,
-    shuffle: true,
-    callbacks: {
-      onEpochEnd: async (epoch, logs) => {
-        historyLoss.push(logs.loss || 0);
-        valLossHistory.push(logs.val_loss || 0);
-        historyAcc.push(logs.acc || 0);
-        valAccHistory.push(logs.val_acc || 0);
-        drawCharts();
-
-        logEl.innerHTML += `
-          <div style="margin:2px 0;">
-            <b>Epoch ${epoch + 1}/${epochs}</b> — 
-            <span style="color:#9ef;">Loss:</span> ${logs.loss.toFixed(4)} |
-            <span style="color:#ffb;">Val Loss:</span> ${logs.val_loss.toFixed(4)} |
-            <span style="color:#9f9;">Acc:</span> ${(logs.acc * 100).toFixed(1)}% |
-            <span style="color:#f99;">Val Acc:</span> ${(logs.val_acc * 100).toFixed(1)}%
-          </div>`;
-        logEl.scrollTop = logEl.scrollHeight;
-      },
-      onTrainEnd: () => {
-        logEl.innerHTML += `<br><b style="color:#8bc34a;">Training complete ✅</b>`;
-      },
-    },
-  });
-}
-
-// ---- Predict User Diet ----
-async function predictDiet() {
-  if (!model) return alert("Please train the model first!");
-  const input = tf.randomNormal([1, 8]);
-  const prediction = model.predict(input);
-  const result = prediction.argMax(1).dataSync()[0];
-
-  const diets = ["Low Carb Diet", "High Protein Diet", "Balanced Diet"];
-  document.getElementById("result").innerHTML =
-    `<b>Recommended Diet:</b> ${diets[result]}`;
 }
