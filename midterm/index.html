@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Diet Plan Recommender (Two-Tower + MLP)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="brand">HealthTaste • Diet Recommender</div>
+    <div class="hint">Place <code>/data/Personalized_Diet_Recommendations.csv</code> in repo</div>
+  </header>
+
+  <main>
+    <section class="controls panel">
+      <div class="row">
+        <button id="btn-load">Load Data</button>
+        <button id="btn-train" disabled>Train Model</button>
+        <button id="btn-test" disabled>Test / Recommend</button>
+
+        <label>Embed dim: <input id="cfg-dim" type="number" value="32" min="8" max="128"></label>
+        <label>Epochs: <input id="cfg-epochs" type="number" value="6" min="1" max="20"></label>
+        <label>Batch: <input id="cfg-bsz" type="number" value="128" min="8" max="1024"></label>
+        <label>Use MLP: <input id="cfg-mlp" type="checkbox" checked></label>
+      </div>
+      <p class="small">Tip: For quick tests set epochs=3 and dim=16. Training runs in the browser using TensorFlow.js.</p>
+    </section>
+
+    <section class="panel">
+      <h2>Status</h2>
+      <div id="status">Idle. Click Load Data.</div>
+      <pre id="log" class="logbox"></pre>
+    </section>
+
+    <section class="panel split">
+      <div>
+        <h3>Loss Chart</h3>
+        <canvas id="loss-canvas" width="640" height="200"></canvas>
+      </div>
+      <div>
+        <h3>Embedding Projection</h3>
+        <canvas id="proj-canvas" width="420" height="200"></canvas>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h3>Test / Compare Recommendations</h3>
+      <div id="test-area">
+        <p>After training, click <strong>Test / Recommend</strong>.</p>
+        <div id="tables-wrap"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <small>TensorFlow.js demo • Two-Tower + MLP • Prototype only</small>
+  </footer>
+
+  <!-- TensorFlow.js -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+  <!-- Data loader & core code -->
+  <script src="data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
