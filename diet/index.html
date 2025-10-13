@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Personalized Diet Recommender</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>🥗 Personalized Diet Plan Recommender</h1>
+
+    <div class="controls">
+      <button id="load-btn">Load Dataset</button>
+
+      <div class="selectors">
+        <label for="user-select">Select User:</label>
+        <select id="user-select">
+          <option value="">-- Choose a user --</option>
+        </select>
+        <button id="recommend-btn">Recommend Diet</button>
+      </div>
+    </div>
+
+    <div id="result" class="result"></div>
+
+    <canvas id="nutritionChart" width="400" height="200"></canvas>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
