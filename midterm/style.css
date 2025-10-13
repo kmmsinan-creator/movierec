@@ -1,0 +1,17 @@
+/* style.css - clean, Netflix-like minimal */
+*{box-sizing:border-box}
+body{font-family:Inter,Arial,sans-serif;background:#111;color:#eee;margin:0}
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:#000;position:sticky;top:0}
+.brand{color:#e76f51;font-weight:700}
+.hint{color:#9b9b9b;font-size:13px}
+main{max-width:1100px;margin:28px auto;padding:0 18px}
+.panel{background:rgba(255,255,255,0.03);padding:16px;border-radius:10px;margin-bottom:18px;border:1px solid rgba(255,255,255,0.03)}
+.controls .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+button{background:#e76f51;border:none;color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer}
+.small{color:#bdbdbd;font-size:13px;margin-top:8px}
+.logbox{height:160px;overflow:auto;background:#0b0b0b;padding:8px;border-radius:6px;color:#cfcfcf}
+.split{display:flex;gap:12px}
+.split > div{flex:1}
+#tables-wrap table{width:100%;border-collapse:collapse}
+#tables-wrap td,#tables-wrap th{padding:8px;border-bottom:1px solid rgba(255,255,255,0.04)}
+footer{text-align:center;padding:12px;color:#8b8b8b}
