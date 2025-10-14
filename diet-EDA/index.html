@@ -3,31 +3,44 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🥗 Diet Data EDA Dashboard</title>
+  <title>🥗 Professional EDA Dashboard</title>
 
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
-
 <body>
   <div class="container">
-    <h1>🥗 Personalized Diet EDA Dashboard</h1>
-    <p>Upload your CSV file to explore data insights interactively.</p>
+    <header>
+      <h1>🥗 Personalized Diet Data EDA Dashboard</h1>
+      <p>Interactive, visual exploration of your personalized nutrition dataset</p>
+    </header>
 
-    <div class="upload-box">
+    <section class="upload">
       <input type="file" id="csvFile" accept=".csv" />
       <button id="loadData">Load Data</button>
-    </div>
+    </section>
 
-    <div id="summary" class="summary"></div>
+    <section id="summary" class="summary-cards"></section>
 
-    <div class="charts">
+    <section class="controls">
+      <div>
+        <label for="numericSelect">Numeric Column:</label>
+        <select id="numericSelect"></select>
+      </div>
+      <div>
+        <label for="categorySelect">Categorical Column:</label>
+        <select id="categorySelect"></select>
+      </div>
+      <button id="updatePlots">Update Charts</button>
+    </section>
+
+    <section class="charts">
       <div id="distChart" class="chart"></div>
       <div id="barChart" class="chart"></div>
       <div id="heatmapChart" class="chart"></div>
       <div id="scatterChart" class="chart"></div>
-    </div>
+    </section>
   </div>
 
   <script src="script.js"></script>
