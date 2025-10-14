@@ -1,118 +1,135 @@
 let globalData = [];
 
 document.getElementById("loadData").addEventListener("click", () => {
-  const fileInput = document.getElementById("csvFile");
-  if (!fileInput.files.length) {
-    alert("Please upload a CSV file first!");
+  const file = document.getElementById("csvFile").files[0];
+  if (!file) {
+    alert("Please upload a CSV file!");
     return;
   }
 
-  Papa.parse(fileInput.files[0], {
+  Papa.parse(file, {
     header: true,
     skipEmptyLines: true,
     complete: (result) => {
       globalData = result.data;
-      displaySummary(globalData);
-      drawCharts(globalData);
+      setupDashboard(globalData);
     },
   });
 });
 
-function displaySummary(data) {
-  const columns = Object.keys(data[0]);
-  const summaryDiv = document.getElementById("summary");
+function setupDashboard(data) {
+  const cols = Object.keys(data[0]);
+  const numCols = cols.filter((c) => !isNaN(parseFloat(data[0][c])));
+  const catCols = cols.filter((c) => isNaN(parseFloat(data[0][c])));
 
-  summaryDiv.innerHTML = `
-    <h3>✅ Dataset Loaded Successfully</h3>
-    <p><strong>Rows:</strong> ${data.length}</p>
-    <p><strong>Columns:</strong> ${columns.length}</p>
-    <p><strong>Available Columns:</strong> ${columns.join(", ")}</p>
+  // Summary cards
+  document.getElementById("summary").innerHTML = `
+    <div class="summary-card"><h2>${data.length}</h2><p>Rows</p></div>
+    <div class="summary-card"><h2>${cols.length}</h2><p>Columns</p></div>
+    <div class="summary-card"><h2>${numCols.length}</h2><p>Numeric Columns</p></div>
+    <div class="summary-card"><h2>${catCols.length}</h2><p>Categorical Columns</p></div>
   `;
+
+  const numSelect = document.getElementById("numericSelect");
+  const catSelect = document.getElementById("categorySelect");
+
+  numSelect.innerHTML = numCols.map((c) => `<option value="${c}">${c}</option>`).join("");
+  catSelect.innerHTML = catCols.map((c) => `<option value="${c}">${c}</option>`).join("");
+
+  document.getElementById("updatePlots").onclick = () => {
+    drawEDA(data, numSelect.value, catSelect.value);
+  };
+
+  // Draw initial graphs
+  drawEDA(data, numCols[0], catCols[0]);
 }
 
-function drawCharts(data) {
-  const numericCols = Object.keys(data[0]).filter((col) =>
-    !isNaN(parseFloat(data[0][col]))
-  );
+function drawEDA(data, numericCol, categoryCol) {
+  const numValues = data.map((d) => parseFloat(d[numericCol]) || 0);
 
-  // Histogram for BMI
-  if (numericCols.includes("BMI")) {
-    const bmiValues = data.map((d) => parseFloat(d["BMI"]));
-    Plotly.newPlot("distChart", [
-      {
-        x: bmiValues,
-        type: "histogram",
-        marker: { color: "#00C6FF" },
-      },
-    ], { title: "BMI Distribution", xaxis: { title: "BMI" } });
-  }
+  // Histogram
+  Plotly.newPlot("distChart", [
+    { x: numValues, type: "histogram", marker: { color: "#0072ff" } },
+  ], {
+    title: `${numericCol} Distribution`,
+    xaxis: { title: numericCol },
+    yaxis: { title: "Count" },
+  });
 
-  // Bar chart for Recommended Meal Plan counts
-  if (data[0]["Recommended_Meal_Plan"]) {
-    const planCounts = {};
+  // Bar chart (category-wise average)
+  if (categoryCol) {
+    const grouped = {};
     data.forEach((d) => {
-      const plan = d["Recommended_Meal_Plan"];
-      if (plan) planCounts[plan] = (planCounts[plan] || 0) + 1;
+      const cat = d[categoryCol];
+      if (!grouped[cat]) grouped[cat] = [];
+      grouped[cat].push(parseFloat(d[numericCol]) || 0);
     });
 
+    const cats = Object.keys(grouped);
+    const means = cats.map((c) => avg(grouped[c]));
     Plotly.newPlot("barChart", [
-      {
-        x: Object.keys(planCounts),
-        y: Object.values(planCounts),
-        type: "bar",
-        marker: { color: "#FF6B6B" },
-      },
-    ], { title: "Recommended Meal Plan Distribution" });
+      { x: cats, y: means, type: "bar", marker: { color: "#00c6ff" } },
+    ], {
+      title: `Average ${numericCol} by ${categoryCol}`,
+      xaxis: { title: categoryCol },
+      yaxis: { title: `Average ${numericCol}` },
+    });
   }
 
-  // Heatmap (correlation)
-  const numericData = numericCols.map((col) => data.map((d) => +d[col] || 0));
-  const corr = correlationMatrix(numericData);
-  Plotly.newPlot("heatmapChart", [
-    {
-      z: corr,
-      x: numericCols,
-      y: numericCols,
-      type: "heatmap",
-      colorscale: "RdBu",
-    },
-  ], { title: "Correlation Heatmap" });
+  // Heatmap
+  const numCols = Object.keys(data[0]).filter((c) => !isNaN(parseFloat(data[0][c])));
+  const matrix = numCols.map((c) => data.map((d) => parseFloat(d[c]) || 0));
+  const corr = correlationMatrix(matrix);
+  Plotly.newPlot("heatmapChart", [{
+    z: corr,
+    x: numCols,
+    y: numCols,
+    type: "heatmap",
+    colorscale: "RdBu",
+  }], {
+    title: "Correlation Heatmap",
+  });
 
-  // Scatter plot: BMI vs Recommended Calories
-  if (numericCols.includes("BMI") && numericCols.includes("Recommended_Calories")) {
-    const bmi = data.map((d) => +d["BMI"]);
-    const recCal = data.map((d) => +d["Recommended_Calories"]);
-    Plotly.newPlot("scatterChart", [
-      {
-        x: bmi,
-        y: recCal,
-        mode: "markers",
-        marker: { color: "#0072FF" },
-      },
-    ], { title: "BMI vs Recommended Calories" });
+  // Scatter plot (BMI vs Recommended Calories if available)
+  if ("BMI" in data[0] && "Recommended_Calories" in data[0]) {
+    const bmi = data.map((d) => parseFloat(d["BMI"]) || 0);
+    const recCal = data.map((d) => parseFloat(d["Recommended_Calories"]) || 0);
+    Plotly.newPlot("scatterChart", [{
+      x: bmi,
+      y: recCal,
+      mode: "markers",
+      marker: { color: "#ff6b6b" },
+    }], {
+      title: "BMI vs Recommended Calories",
+      xaxis: { title: "BMI" },
+      yaxis: { title: "Recommended Calories" },
+    });
   }
 }
 
-// Utility: correlation matrix
+function avg(arr) {
+  return arr.reduce((a, b) => a + b, 0) / arr.length;
+}
+
 function correlationMatrix(dataArrays) {
   const n = dataArrays.length;
   const matrix = Array.from({ length: n }, () => Array(n).fill(0));
   for (let i = 0; i < n; i++) {
     for (let j = 0; j < n; j++) {
-      matrix[i][j] = pearsonCorrelation(dataArrays[i], dataArrays[j]);
+      matrix[i][j] = pearson(dataArrays[i], dataArrays[j]);
     }
   }
   return matrix;
 }
 
-function pearsonCorrelation(x, y) {
+function pearson(x, y) {
   const n = x.length;
-  const meanX = x.reduce((a, b) => a + b, 0) / n;
-  const meanY = y.reduce((a, b) => a + b, 0) / n;
+  const meanX = avg(x);
+  const meanY = avg(y);
   const num = x.map((_, i) => (x[i] - meanX) * (y[i] - meanY)).reduce((a, b) => a + b, 0);
   const den = Math.sqrt(
     x.map((v) => Math.pow(v - meanX, 2)).reduce((a, b) => a + b, 0) *
     y.map((v) => Math.pow(v - meanY, 2)).reduce((a, b) => a + b, 0)
   );
-  return den === 0 ? 0 : num / den;
+  return den ? num / den : 0;
 }
