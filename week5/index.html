@@ -3,244 +3,57 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Personalized Diet Plan Recommender</title>
-
-  <!-- Chart.js and TensorFlow.js -->
+  <title>Personalized Diet Recommender</title>
+  <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0"></script>
-
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #0e1117;
-      color: #e6edf3;
-      margin: 0;
-      padding: 0;
-    }
-
-    header {
-      background-color: #161b22;
-      padding: 20px;
-      text-align: center;
-      font-size: 24px;
-      font-weight: bold;
-      color: #00e676;
-      border-bottom: 2px solid #00e676;
-    }
-
-    .container {
-      max-width: 1000px;
-      margin: 30px auto;
-      background-color: #161b22;
-      border-radius: 12px;
-      box-shadow: 0 0 10px #00e67633;
-      padding: 25px;
-    }
-
-    h2 {
-      color: #00e676;
-      border-bottom: 1px solid #00e67633;
-      padding-bottom: 8px;
-    }
-
-    label {
-      display: block;
-      margin: 10px 0 5px;
-      font-weight: 600;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      background-color: #21262d;
-      color: #e6edf3;
-    }
-
-    button {
-      margin-top: 15px;
-      background-color: #00e676;
-      color: #000;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: 0.3s;
-    }
-
-    button:hover {
-      background-color: #03c96b;
-    }
-
-    #log {
-      background-color: #0d1117;
-      border-radius: 10px;
-      padding: 15px;
-      height: 220px;
-      overflow-y: auto;
-      font-family: monospace;
-      white-space: pre-wrap;
-      line-height: 1.4em;
-      font-size: 14px;
-      color: #c9d1d9;
-      border: 1px solid #00e67633;
-    }
-
-    canvas {
-      background-color: #0d1117;
-      border-radius: 10px;
-      margin-top: 20px;
-      border: 1px solid #00e67633;
-    }
-
-    footer {
-      text-align: center;
-      padding: 15px;
-      font-size: 13px;
-      color: #aaa;
-    }
-  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
 </head>
-
 <body>
-  <header>🥗 Personalized Diet Plan Recommender</header>
+  <header>
+    <h1>🍎 Personalized Diet Recommendation System</h1>
+    <p>AI-powered diet planning with real model learning</p>
+  </header>
 
-  <div class="container">
-    <h2>1️⃣ Input User Information</h2>
-    <label>Age:</label>
-    <input type="number" id="age" min="10" max="100" />
+  <main>
+    <section id="controls">
+      <button id="loadDataBtn">Load Dataset</button>
+      <button id="trainModelBtn">Train Model</button>
+      <button id="predictBtn">Predict Diet Plan</button>
+    </section>
 
-    <label>Weight (kg):</label>
-    <input type="number" id="weight" min="20" max="200" />
+    <section id="userInput">
+      <h2>User Profile</h2>
+      <label for="age">Age:</label>
+      <input type="number" id="age" placeholder="Enter age" />
 
-    <label>Height (cm):</label>
-    <input type="number" id="height" min="100" max="220" />
+      <label for="bmi">BMI:</label>
+      <input type="number" id="bmi" placeholder="Enter BMI" />
 
-    <label>Health Goal:</label>
-    <select id="goal">
-      <option value="weight_loss">Weight Loss</option>
-      <option value="muscle_gain">Muscle Gain</option>
-      <option value="maintain">Maintain Health</option>
-    </select>
+      <label for="goal">Goal:</label>
+      <select id="goal">
+        <option value="">Select goal</option>
+        <option value="weight_loss">Weight Loss</option>
+        <option value="muscle_gain">Muscle Gain</option>
+        <option value="maintenance">Maintenance</option>
+      </select>
+    </section>
 
-    <button onclick="predictDiet()">Get Diet Recommendation</button>
+    <section id="logSection">
+      <h2>Training Progress</h2>
+      <div id="log" class="log-box">Waiting for training...</div>
+      <canvas id="lossChart" width="500" height="250"></canvas>
+    </section>
 
-    <div id="result" style="margin-top:15px; font-weight:600;"></div>
-  </div>
+    <section id="prediction">
+      <h2>Recommended Diet Plan</h2>
+      <div id="result" class="result-box">No prediction yet</div>
+    </section>
+  </main>
 
-  <div class="container">
-    <h2>2️⃣ Training / Evaluation</h2>
-    <div id="log">No training yet...</div>
-    <button onclick="trainModel()">Start Training</button>
+  <footer>
+    <p>Built with ❤️ using TensorFlow.js</p>
+  </footer>
 
-    <canvas id="lossChart" height="140"></canvas>
-    <canvas id="accChart" height="140"></canvas>
-  </div>
-
-  <footer>© 2025 Diet Plan Recommendation Project</footer>
-
-  <script>
-    async function trainModel() {
-      const logBox = document.getElementById('log');
-      logBox.innerHTML = "<b>Training started...</b><br>";
-
-      const model = tf.sequential();
-      model.add(tf.layers.dense({ units: 8, inputShape: [3], activation: 'relu' }));
-      model.add(tf.layers.dense({ units: 1, activation: 'sigmoid' }));
-      model.compile({ optimizer: 'adam', loss: 'binaryCrossentropy', metrics: ['accuracy'] });
-
-      const xs = tf.randomNormal([100, 3]);
-      const ys = tf.randomUniform([100, 1]);
-
-      const lossChart = new Chart(document.getElementById('lossChart'), {
-        type: 'line',
-        data: {
-          labels: [],
-          datasets: [{
-            label: 'Training Loss',
-            data: [],
-            borderColor: '#00e676',
-            fill: false,
-            tension: 0.3
-          }]
-        },
-        options: {
-          scales: { x: { title: { display: true, text: 'Epoch' } },
-                    y: { title: { display: true, text: 'Loss' } } }
-        }
-      });
-
-      const accChart = new Chart(document.getElementById('accChart'), {
-        type: 'line',
-        data: {
-          labels: [],
-          datasets: [{
-            label: 'Accuracy',
-            data: [],
-            borderColor: '#2196f3',
-            fill: false,
-            tension: 0.3
-          }]
-        },
-        options: {
-          scales: { x: { title: { display: true, text: 'Epoch' } },
-                    y: { title: { display: true, text: 'Accuracy' } } }
-        }
-      });
-
-      await model.fit(xs, ys, {
-        epochs: 10,
-        batchSize: 16,
-        callbacks: {
-          onEpochEnd: async (epoch, logs) => {
-            const p = document.createElement('p');
-            p.innerHTML = `Epoch ${epoch + 1}: <b>Loss = ${logs.loss.toFixed(4)}</b>, <b>Accuracy = ${(logs.acc || logs.accuracy).toFixed(4)}</b>`;
-            logBox.appendChild(p);
-            logBox.scrollTop = logBox.scrollHeight;
-
-            lossChart.data.labels.push(epoch + 1);
-            lossChart.data.datasets[0].data.push(logs.loss);
-            lossChart.update();
-
-            accChart.data.labels.push(epoch + 1);
-            accChart.data.datasets[0].data.push(logs.acc || logs.accuracy);
-            accChart.update();
-          },
-          onTrainEnd: async () => {
-            const done = document.createElement('p');
-            done.style.color = '#00e676';
-            done.innerHTML = "<b>✅ Training Completed Successfully!</b>";
-            logBox.appendChild(done);
-          }
-        }
-      });
-    }
-
-    function predictDiet() {
-      const age = parseInt(document.getElementById('age').value);
-      const weight = parseFloat(document.getElementById('weight').value);
-      const height = parseFloat(document.getElementById('height').value);
-      const goal = document.getElementById('goal').value;
-      const resultDiv = document.getElementById('result');
-
-      if (!age || !weight || !height) {
-        resultDiv.innerHTML = "<span style='color:#f44336;'>⚠️ Please fill in all fields!</span>";
-        return;
-      }
-
-      let recommendation = "";
-      if (goal === "weight_loss") {
-        recommendation = "🥦 Focus on a calorie deficit with high-protein, low-carb meals like grilled chicken, lentils, and vegetables.";
-      } else if (goal === "muscle_gain") {
-        recommendation = "🍗 Add more lean protein, complex carbs, and healthy fats such as eggs, oats, and avocados.";
-      } else {
-        recommendation = "🥗 Maintain a balanced diet with fruits, whole grains, and moderate protein portions.";
-      }
-
-      resultDiv.innerHTML = `<b>Recommended Diet Plan:</b><br>${recommendation}`;
-    }
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
