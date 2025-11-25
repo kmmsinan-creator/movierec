@@ -6,7 +6,7 @@ two-tower.js
  - Item tower: item_id -> embedding table
  - Scoring: dot product
  - Loss: In-batch sampled-softmax (softmax cross entropy over in-batch items)
- 
+
  Comments:
  - Two-tower is efficient for candidate generation: precompute item embeddings,
    compute user embedding at request time and do a fast dot-product similarity.
