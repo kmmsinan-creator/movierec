@@ -1,49 +1,61 @@
+index.html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>MovieLens Two-Tower TF.js Demo</title>
+<meta charset="utf-8" />
+<title>MovieLens Two-Tower TF.js Demo — Search (romantic comedy)</title>
+<!-- Reference to lecture slides used as guidance: -->
+<!-- :contentReference[oaicite:0]{index=0} -->
 <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    button { margin-right: 10px; padding: 8px 14px; }
-    #status { margin-top: 10px; white-space: pre-line; }
-    canvas { border: 1px solid #ccc; margin-top: 10px; }
-    table { border-collapse: collapse; margin-top: 15px; }
-    th, td { border: 1px solid #ccc; padding: 6px 10px; }
-    .flex { display: flex; gap: 20px; }
+  body { font-family: Arial, sans-serif; padding: 18px; color: #222; }
+  h1 { margin: 0 0 8px 0; font-size: 20px; }
+  .controls { margin: 12px 0; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  button { padding: 8px 12px; cursor: pointer; }
+  input[type="text"] { padding: 8px; width: 360px; }
+  #status { margin-top: 12px; white-space: pre-line; font-size: 13px; color: #333; }
+  canvas { border: 1px solid #ddd; margin-top: 10px; display: block; background: #fff; }
+  #resultTable { margin-top: 14px; }
+  table { border-collapse: collapse; width: 100%; max-width: 100%; }
+  th, td { border: 1px solid #ddd; padding: 6px 8px; text-align: left; font-size: 13px; }
+  th { background: #f8f8f8; }
+  .small { font-size: 12px; color: #666; }
 </style>
 </head>
-
 <body>
-<h1>MovieLens 100K Two-Tower Retrieval Demo (TensorFlow.js)</h1>
+  <h1>MovieLens 100K — Two-Tower TF.js Demo (Client-side)</h1>
+  <p class="small">
+    Pure client-side demo. To search (e.g. "romantic comedy") type your query and click <strong>Search</strong>.
+    Load the provided MovieLens files (u.item and u.data) via the environment transformation of paths:
+    <code>/mnt/data/u.item</code> and <code>/mnt/data/u.data</code>.
+  </p>
 
-<p>
-This runs **entirely in browser**, using TensorFlow.js.<br>
-Host on GitHub Pages by placing this repo in a public repository and enabling Pages.<br>
-Training may take 10–30 seconds depending on device.  
-</p>
+  <div class="controls">
+    <!-- Search UI -->
+    <input id="searchInput" type="text" placeholder="Type e.g. 'romantic comedy' or 'comedy'"/>
+    <button id="searchBtn">Search</button>
 
-<button id="loadBtn">Load Data</button>
-<button id="trainBtn">Train</button>
-<button id="testBtn">Test</button>
+    <!-- Data / Train / Test -->
+    <button id="loadBtn">Load Data</button>
+    <button id="trainBtn">Train</button>
+    <button id="testBtn">Test (user demo)</button>
+  </div>
 
-<div id="status"></div>
+  <div id="status">Status: ready.</div>
 
-<h3>Training Loss</h3>
-<canvas id="lossChart" width="600" height="200"></canvas>
+  <h3>Training Loss</h3>
+  <canvas id="lossChart" width="700" height="180"></canvas>
 
-<h3>Item Embedding Projection (PCA)</h3>
-<canvas id="projChart" width="600" height="400"></canvas>
+  <h3>Item Embedding Projection (PCA)</h3>
+  <canvas id="projChart" width="700" height="420"></canvas>
 
-<h3>Top-10 Rated vs Top-10 Recommended</h3>
-<div id="resultTable"></div>
+  <h3>Results</h3>
+  <div id="resultTable"></div>
 
-<!-- TF.js -->
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.17.0/dist/tf.min.js"></script>
+  <!-- TensorFlow.js -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.17.0/dist/tf.min.js"></script>
 
-<!-- Application scripts -->
-<script src="two-tower.js"></script>
-<script src="app.js"></script>
-
+  <!-- App scripts -->
+  <script src="two-tower.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
