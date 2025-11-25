@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MovieLens Two-Tower TF.js Demo</title>
+<style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    button { margin-right: 10px; padding: 8px 14px; }
+    #status { margin-top: 10px; white-space: pre-line; }
+    canvas { border: 1px solid #ccc; margin-top: 10px; }
+    table { border-collapse: collapse; margin-top: 15px; }
+    th, td { border: 1px solid #ccc; padding: 6px 10px; }
+    .flex { display: flex; gap: 20px; }
+</style>
+</head>
+
+<body>
+<h1>MovieLens 100K Two-Tower Retrieval Demo (TensorFlow.js)</h1>
+
+<p>
+This runs **entirely in browser**, using TensorFlow.js.<br>
+Host on GitHub Pages by placing this repo in a public repository and enabling Pages.<br>
+Training may take 10–30 seconds depending on device.  
+</p>
+
+<button id="loadBtn">Load Data</button>
+<button id="trainBtn">Train</button>
+<button id="testBtn">Test</button>
+
+<div id="status"></div>
+
+<h3>Training Loss</h3>
+<canvas id="lossChart" width="600" height="200"></canvas>
+
+<h3>Item Embedding Projection (PCA)</h3>
+<canvas id="projChart" width="600" height="400"></canvas>
+
+<h3>Top-10 Rated vs Top-10 Recommended</h3>
+<div id="resultTable"></div>
+
+<!-- TF.js -->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.17.0/dist/tf.min.js"></script>
+
+<!-- Application scripts -->
+<script src="two-tower.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
